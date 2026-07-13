@@ -1,4 +1,4 @@
-import type { StoredRecord, FlatRecord, FieldValue } from "./record.js";
+import type { StoredRecord, FlatRecord, FieldValue } from "../types.js";
 
 export interface RecordStore {
   create(entityType: string, fields: Map<string, FieldValue>): Promise<StoredRecord>;

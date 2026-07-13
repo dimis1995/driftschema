@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
-import { FieldDefinitionStore } from "../src/fieldDefinition.js";
-import { InMemoryRecordStore } from "../src/inMemoryRecordStore.js";
-import { ValidationError } from "../src/validation.js";
+import { FieldDefinitionStore } from "../src/field-definitions/FieldDefinitionStore.js";
+import { InMemoryRecordStore } from "../src/records/InMemoryRecordStore.js";
+import { ValidationError } from "../src/records/validation.js";
 
 describe("InMemoryRecordStore", () => {
   it("creates and retrieves a record via the low-level API", async () => {

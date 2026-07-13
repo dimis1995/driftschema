@@ -1,7 +1,7 @@
-import { FieldDefinitionStore } from "./fieldDefinition.js";
+import { FieldDefinitionStore } from "../field-definitions/FieldDefinitionStore.js";
 import { fromFlatRecord, toFlatRecord } from "./flatten.js";
-import type { StoredRecord, FieldValue, FlatRecord } from "./record.js";
-import { RecordStore } from "./recordStore.js";
+import type { StoredRecord, FieldValue, FlatRecord } from "../types.js";
+import { RecordStore } from "./RecordStore.js";
 import { validateFields } from "./validation.js";
 
 export class InMemoryRecordStore implements RecordStore {

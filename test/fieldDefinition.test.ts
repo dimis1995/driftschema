@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { FieldDefinitionStore } from "../src/fieldDefinition.js";
+import { FieldDefinitionStore } from "../src/field-definitions/FieldDefinitionStore.js";
 
 describe("FieldDefinitionStore", () => {
   it("adds a field definition and retrieves it by entity type", () => {

@@ -1,5 +1,5 @@
-import { FieldDefinition } from "./fieldDefinition.js";
-import { FieldValue } from "./record.js";
+import { FieldDefinition } from "../field-definitions/FieldDefinition.js";
+import { FieldValue } from "../types.js";
 
 export class ValidationError extends Error {
   constructor(public readonly issues: string[]) {

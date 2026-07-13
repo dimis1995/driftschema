@@ -1,5 +1,5 @@
-import { FieldDefinition } from "./fieldDefinition.js";
-import { FieldValue, FlatRecord, StoredRecord } from "./record.js";
+import { FieldDefinition } from "../field-definitions/FieldDefinition.js";
+import { FieldValue, FlatRecord, StoredRecord } from "../types.js";
 
 const SYSTEM_KEYS = new Set(["id", "entityType"]);
 

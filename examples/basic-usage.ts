@@ -1,7 +1,7 @@
-import { FieldDefinitionStore } from "../src/fieldDefinition.js";
-import { FieldValue } from "../src/record.js";
-import { InMemoryRecordStore } from "../src/inMemoryRecordStore.js";
-import { ValidationError } from "../src/validation.js";
+import { FieldDefinitionStore } from "../src/field-definitions/FieldDefinitionStore.js";
+import { FieldValue } from "../src/types.js";
+import { InMemoryRecordStore } from "../src/records/InMemoryRecordStore.js";
+import { ValidationError } from "../src/records/validation.js";
 
 // 1. Define the schema for an entity type — this replaces a fixed DB schema.
 const fieldDefinitions = new FieldDefinitionStore();
