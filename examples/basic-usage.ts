@@ -1,5 +1,6 @@
 import { FieldDefinitionStore } from "../src/fieldDefinition.js";
-import { FieldValue, RecordStore } from "../src/record.js";
+import { FieldValue } from "../src/record.js";
+import { InMemoryRecordStore } from "../src/inMemoryRecordStore.js";
 import { ValidationError } from "../src/validation.js";
 
 // 1. Define the schema for an entity type — this replaces a fixed DB schema.
@@ -22,9 +23,9 @@ const shape = fieldDefinitions.add({
 console.log("Registered fields:", fieldDefinitions.getByEntityType("diamonds"));
 
 // 2. Create records using the low-level (StoredRecord) API — keyed by field id.
-const recordStore = new RecordStore(fieldDefinitions);
+const recordStore = new InMemoryRecordStore(fieldDefinitions);
 
-const storedDiamond = recordStore.create(
+const storedDiamond = await recordStore.create(
   "diamonds",
   new Map<string, FieldValue>([
     [caratWeight.id, 1.5],
@@ -35,7 +36,7 @@ const storedDiamond = recordStore.create(
 console.log("\nStored (low-level) record:", storedDiamond);
 
 // 3. Create records using the high-level (FlatRecord) API — keyed by field name.
-const flatDiamond = recordStore.createFlat("diamonds", {
+const flatDiamond = await recordStore.createFlat("diamonds", {
   caratWeight: 2.0,
   shape: "oval",
 });
@@ -43,12 +44,12 @@ const flatDiamond = recordStore.createFlat("diamonds", {
 console.log("\nFlat record (created via createFlat):", flatDiamond);
 
 // 4. The two APIs are two views of the same data — read the low-level record back flat.
-const flatView = recordStore.getFlatById(storedDiamond.id);
+const flatView = await recordStore.getFlatById(storedDiamond.id);
 console.log("\nSame record as above, read back via flat API:", flatView);
 
 // 5. Validation in action — a missing required field is rejected.
 try {
-  recordStore.create("diamonds", new Map([[shape.id, "pear"]])); // missing caratWeight
+  await recordStore.create("diamonds", new Map([[shape.id, "pear"]])); // missing caratWeight
 } catch (err) {
   if (err instanceof ValidationError) {
     console.log("\nValidation correctly rejected an invalid record:");
