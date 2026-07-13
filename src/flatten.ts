@@ -3,10 +3,7 @@ import { FieldValue, FlatRecord, StoredRecord } from "./record.js";
 
 const SYSTEM_KEYS = new Set(["id", "entityType"]);
 
-export function toFlatRecord(
-  record: StoredRecord,
-  definitions: FieldDefinition[],
-): FlatRecord {
+export function toFlatRecord(record: StoredRecord, definitions: FieldDefinition[]): FlatRecord {
   const flat: FlatRecord = {
     id: record.id,
     entityType: record.entityType,
@@ -19,9 +16,7 @@ export function toFlatRecord(
     if (!def) continue; // TODO: Figure how to handle orphaned definitions
 
     if (SYSTEM_KEYS.has(def.name)) {
-      throw new Error(
-        `Field name "${def.name}" collides with a reserved system key`,
-      );
+      throw new Error(`Field name "${def.name}" collides with a reserved system key`);
     }
     flat[def.name] = value;
   }
@@ -29,10 +24,7 @@ export function toFlatRecord(
   return flat;
 }
 
-export function fromFlatRecord(
-  flat: FlatRecord,
-  definitions: FieldDefinition[],
-): StoredRecord {
+export function fromFlatRecord(flat: FlatRecord, definitions: FieldDefinition[]): StoredRecord {
   const fields = new Map<string, FieldValue>();
   const defsByName = new Map(definitions.map((d) => [d.name, d]));
 

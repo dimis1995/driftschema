@@ -43,7 +43,12 @@ describe("RecordStore", () => {
   describe("getByEntityType / getById", () => {
     it("filters records by entity type", () => {
       recordStore.create("diamonds", new Map([[caratFieldId, 1]]));
-      fieldDefinitionStore.add({ entityType: "rings", name: "size", type: "number", required: false });
+      fieldDefinitionStore.add({
+        entityType: "rings",
+        name: "size",
+        type: "number",
+        required: false,
+      });
       recordStore.create("rings", new Map());
 
       expect(recordStore.getByEntityType("diamonds")).toHaveLength(1);

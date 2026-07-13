@@ -37,7 +37,9 @@ describe("validateFields", () => {
 
   it("throws when a field has the wrong type", () => {
     const fields = new Map([["field-1", "not-a-number"]]);
-    expect(() => validateFields(fields, [def()])).toThrow(/caratWeight invalid type: expected number, got string/);
+    expect(() => validateFields(fields, [def()])).toThrow(
+      /caratWeight invalid type: expected number, got string/,
+    );
   });
 
   it("validates date fields using instanceof Date", () => {

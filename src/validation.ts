@@ -27,7 +27,9 @@ export function validateFields(fields: Map<string, FieldValue>, definitions: Fie
     }
 
     if (!isCorrectType(value, definition.type)) {
-      issues.push(`${definition.name} invalid type: expected ${definition.type}, got ${typeof value}`);
+      issues.push(
+        `${definition.name} invalid type: expected ${definition.type}, got ${typeof value}`,
+      );
     }
   }
 

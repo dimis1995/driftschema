@@ -5,7 +5,11 @@
   "scripts": {
     "test": "vitest run",
     "prepare": "husky",
-    "example": "tsx examples/basic-usage.ts"
+    "example": "tsx examples/basic-usage.ts",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "type": "module",
   "keywords": [],
@@ -13,10 +17,17 @@
   "license": "ISC",
   "description": "",
   "devDependencies": {
+    "@babel/core": "^8.0.1",
+    "@babel/eslint-parser": "^8.0.1",
+    "@babel/preset-typescript": "^8.0.1",
     "@commitlint/cli": "^20.5.3",
     "@commitlint/config-conventional": "^20.5.3",
+    "@eslint/js": "^10.0.1",
     "@types/node": "^26.1.1",
+    "eslint": "^10.7.0",
+    "eslint-config-prettier": "^10.1.8",
     "husky": "^9.1.7",
+    "prettier": "^3.9.5",
     "tsx": "^4.23.0",
     "typescript": "^7.0.2",
     "vitest": "^4.1.10"

@@ -6,7 +6,6 @@ export interface FieldDefinition {
   required: boolean;
 }
 
-
 export class FieldDefinitionStore {
   private defs: FieldDefinition[] = [];
 
@@ -17,6 +16,6 @@ export class FieldDefinitionStore {
   }
 
   getByEntityType(entityType: string): FieldDefinition[] {
-    return this.defs.filter(d => d.entityType === entityType);
+    return this.defs.filter((d) => d.entityType === entityType);
   }
 }
