@@ -4,7 +4,8 @@
   "main": "index.js",
   "scripts": {
     "test": "vitest run",
-    "prepare": "husky"
+    "prepare": "husky",
+    "example": "tsx examples/basic-usage.ts"
   },
   "type": "module",
   "keywords": [],
