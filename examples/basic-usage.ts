@@ -1,5 +1,6 @@
 import { FieldDefinitionStore } from "../src/field-definitions/FieldDefinitionStore.js";
 import { FieldValue } from "../src/types.js";
+import { RecordStoreFactory } from "../src/records/RecordStoreFactory.js";
 import { InMemoryRecordStore } from "../src/records/InMemoryRecordStore.js";
 import { ValidationError } from "../src/records/validation.js";
 
@@ -23,7 +24,7 @@ const shape = fieldDefinitions.add({
 console.log("Registered fields:", fieldDefinitions.getByEntityType("diamonds"));
 
 // 2. Create records using the low-level (StoredRecord) API — keyed by field id.
-const recordStore = new InMemoryRecordStore(fieldDefinitions);
+const recordStore = await RecordStoreFactory.create("memory", fieldDefinitions);
 
 const storedDiamond = await recordStore.create(
   "diamonds",
