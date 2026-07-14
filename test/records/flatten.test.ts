@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
-import { toFlatRecord, fromFlatRecord } from "../src/records/flatten.js";
-import { FieldDefinition } from "../src/field-definitions/FieldDefinition.js";
-import { FieldValue, FlatRecord, StoredRecord } from "../src/types.js";
+import { toFlatRecord, fromFlatRecord } from "../../src/records/flatten.js";
+import { FieldDefinition } from "../../src/field-definitions/FieldDefinition.js";
+import { FieldValue, FlatRecord, StoredRecord } from "../../src/types.js";
 
 const caratDef: FieldDefinition = {
   id: "field-carat",

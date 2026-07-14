@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { validateFields, ValidationError } from "../src/records/validation.js";
-import { FieldDefinition } from "../src/field-definitions/FieldDefinition.js";
+import { validateFields, ValidationError } from "../../src/records/validation.js";
+import { FieldDefinition } from "../../src/field-definitions/FieldDefinition.js";
 
 function def(overrides: Partial<FieldDefinition> = {}): FieldDefinition {
   return {
