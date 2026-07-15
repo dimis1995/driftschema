@@ -1,46 +1,23 @@
 {
-  "name": "driftschema",
-  "version": "0.1.0",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "exports": {
-    ".": {
-      "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
-    }
-  },
+  "name": "driftschema-monorepo",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
   "engines": {
     "node": ">=22"
   },
-  "files": [
-    "dist"
-  ],
   "scripts": {
-    "build": "tsc -p tsconfig.build.json",
-    "test": "vitest run",
-    "prepare": "husky",
-    "example": "tsx examples/basic-usage.ts",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
-    "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "build": "npm run build --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present"
   },
   "keywords": [
     "schema",
     "dynamic-schema",
     "orm",
     "typescript",
-    "mongodb",
     "no-migration"
   ],
-  "type": "module",
-  "author": "dimis1995",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/dimis1995/driftschema.git"
-  },
-  "description": "A lightweight, dynamic schema library for JavaScript/TypeScript — define and evolve entity fields at runtime without migrations.",
   "devDependencies": {
     "@babel/core": "^8.0.1",
     "@babel/eslint-parser": "^8.0.1",
@@ -53,7 +30,7 @@
     "eslint-config-prettier": "^10.1.8",
     "husky": "^9.1.7",
     "prettier": "^3.9.5",
-    "tsx": "^4.23.0",
+    "tsx": "^4.23.1",
     "typescript": "^7.0.2",
     "vitest": "^4.1.10"
   }

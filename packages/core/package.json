@@ -1,0 +1,37 @@
+{
+  "name": "driftschema",
+  "version": "0.1.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "test": "vitest run",
+    "prepare": "husky",
+    "example": "tsx examples/basic-usage.ts",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "prepublishOnly": "npm run build && npm test"
+  },
+  "type": "module",
+  "author": "dimis1995",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dimis1995/driftschema.git"
+  },
+  "description": "A lightweight, dynamic schema library for JavaScript/TypeScript — define and evolve entity fields at runtime without migrations."
+}

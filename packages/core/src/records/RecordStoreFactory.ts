@@ -18,6 +18,10 @@ export class RecordStoreFactory {
     this.registry.set("memory", (defs) => new InMemoryRecordStore(defs));
   }
 
+  /** The import function used to load an engine's package. Overridable in tests. */
+  static _importFn: (packageName: string) => Promise<unknown> = (packageName) =>
+    import(packageName);
+
   /**
    * Registers a factory function for an engine name. Called by engine packages as a side effect of being imported.
    */
@@ -44,10 +48,17 @@ export class RecordStoreFactory {
       }
 
       try {
-        await import(packageName);
+        await this._importFn(packageName);
       } catch {
         throw new Error(
           `Engine "${engine} requires the "${packageName}" package. Install it with: npm install ${packageName}`,
+        );
+      }
+
+      if (!this.registry.has(engine)) {
+        throw new Error(
+          `"${packageName}" was imported but did not register the "${engine}" engine. ` +
+            `Check that it calls RecordStoreFactory.register("${engine}", ...).`,
         );
       }
     }
@@ -60,5 +71,6 @@ export class RecordStoreFactory {
   static _resetForTests(): void {
     this.registry = new Map();
     this.registry.set("memory", (defs) => new InMemoryRecordStore(defs));
+    this._importFn = (packageName) => import(packageName);
   }
 }

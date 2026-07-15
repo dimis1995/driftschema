@@ -37,13 +37,25 @@ describe("RecordStoreFactory — registration mechanics", () => {
     const store = await RecordStoreFactory.create("fake-engine", defs);
     expect(store).toBeInstanceOf(FakeEngineStore);
   });
-
-  it("throws an actionable error for a known-but-uninstalled engine", async () => {
+  it("throws an actionable error when the engine's package cannot be imported", async () => {
     const defs = new FieldDefinitionStore();
-    // "mongo" is a known engine name (per ENGINE_PACKAGES) but driftschema-mongo
-    // is not installed in this repo, so the dynamic import will fail.
+
+    RecordStoreFactory._importFn = async () => {
+      throw new Error("Cannot find module 'driftschema-mongo'");
+    };
+
     await expect(RecordStoreFactory.create("mongo", defs)).rejects.toThrow(
       /requires the "driftschema-mongo" package/,
+    );
+  });
+
+  it("throws an actionable error when the package imports fine but never registers", async () => {
+    const defs = new FieldDefinitionStore();
+
+    RecordStoreFactory._importFn = async () => ({}); // simulates a real but broken/incomplete package
+
+    await expect(RecordStoreFactory.create("mongo", defs)).rejects.toThrow(
+      /did not register the "mongo" engine/,
     );
   });
 });
