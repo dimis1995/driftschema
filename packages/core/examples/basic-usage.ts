@@ -1,11 +1,10 @@
-import { FieldDefinitionStore } from "../src/field-definitions/FieldDefinitionStore.js";
 import { FieldValue } from "../src/types.js";
+import { InMemoryFieldDefinitionStore } from "../src/field-definitions/InMemoryFieldDefinitionStore.js";
 import { RecordStoreFactory } from "../src/records/RecordStoreFactory.js";
-import { InMemoryRecordStore } from "../src/records/InMemoryRecordStore.js";
 import { ValidationError } from "../src/records/validation.js";
 
 // 1. Define the schema for an entity type — this replaces a fixed DB schema.
-const fieldDefinitions = new FieldDefinitionStore();
+const fieldDefinitions = new InMemoryFieldDefinitionStore();
 
 const caratWeight = fieldDefinitions.add({
   entityType: "diamonds",

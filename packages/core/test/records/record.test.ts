@@ -1,11 +1,11 @@
 import { describe, it, expect } from "vitest";
-import { FieldDefinitionStore } from "../../src/field-definitions/FieldDefinitionStore.js";
+import { InMemoryFieldDefinitionStore } from "../../src/field-definitions/InMemoryFieldDefinitionStore.js";
 import { InMemoryRecordStore } from "../../src/records/InMemoryRecordStore.js";
 import { ValidationError } from "../../src/records/validation.js";
 
 describe("InMemoryRecordStore", () => {
   it("creates and retrieves a record via the low-level API", async () => {
-    const defs = new FieldDefinitionStore();
+    const defs = new InMemoryFieldDefinitionStore();
     const carat = defs.add({
       entityType: "diamonds",
       name: "caratWeight",
@@ -21,7 +21,7 @@ describe("InMemoryRecordStore", () => {
   });
 
   it("creates and retrieves a record via the flat API", async () => {
-    const defs = new FieldDefinitionStore();
+    const defs = new InMemoryFieldDefinitionStore();
     defs.add({ entityType: "diamonds", name: "caratWeight", type: "number", required: true });
     const store = new InMemoryRecordStore(defs);
 
@@ -32,7 +32,7 @@ describe("InMemoryRecordStore", () => {
   });
 
   it("rejects a record missing a required field", async () => {
-    const defs = new FieldDefinitionStore();
+    const defs = new InMemoryFieldDefinitionStore();
     defs.add({ entityType: "diamonds", name: "caratWeight", type: "number", required: true });
     const store = new InMemoryRecordStore(defs);
 
@@ -40,7 +40,7 @@ describe("InMemoryRecordStore", () => {
   });
 
   it("removes a record on delete", async () => {
-    const defs = new FieldDefinitionStore();
+    const defs = new InMemoryFieldDefinitionStore();
     const carat = defs.add({
       entityType: "diamonds",
       name: "caratWeight",

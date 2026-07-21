@@ -1,5 +1,5 @@
 import { describe, it, expect, afterEach } from "vitest";
-import { FieldDefinitionStore } from "../../src/field-definitions/FieldDefinitionStore.js";
+import { InMemoryFieldDefinitionStore } from "../../src/field-definitions/InMemoryFieldDefinitionStore.js";
 import { RecordStoreFactory } from "../../src/records/RecordStoreFactory.js";
 import { InMemoryRecordStore } from "../../src/records/InMemoryRecordStore.js";
 
@@ -9,7 +9,7 @@ afterEach(() => {
 
 describe("RecordStoreFactory", () => {
   it("creates an InMemoryRecordStore for the 'memory' engine by default", async () => {
-    const defs = new FieldDefinitionStore();
+    const defs = new InMemoryFieldDefinitionStore();
     const store = await RecordStoreFactory.create("memory", defs);
 
     expect(store).toBeInstanceOf(InMemoryRecordStore);
@@ -20,7 +20,7 @@ describe("RecordStoreFactory", () => {
   });
 
   it("throws a clear error for a completely unknown engine", async () => {
-    const defs = new FieldDefinitionStore();
+    const defs = new InMemoryFieldDefinitionStore();
     await expect(RecordStoreFactory.create("sqlite", defs)).rejects.toThrow(
       /Unknown engine "sqlite"/,
     );
@@ -29,7 +29,7 @@ describe("RecordStoreFactory", () => {
 
 describe("RecordStoreFactory — registration mechanics", () => {
   it("allows an engine to register itself and then be created", async () => {
-    const defs = new FieldDefinitionStore();
+    const defs = new InMemoryFieldDefinitionStore();
 
     class FakeEngineStore extends InMemoryRecordStore {}
     RecordStoreFactory.register("fake-engine", (d) => new FakeEngineStore(d));
@@ -38,7 +38,7 @@ describe("RecordStoreFactory — registration mechanics", () => {
     expect(store).toBeInstanceOf(FakeEngineStore);
   });
   it("throws an actionable error when the engine's package cannot be imported", async () => {
-    const defs = new FieldDefinitionStore();
+    const defs = new InMemoryFieldDefinitionStore();
 
     RecordStoreFactory._importFn = async () => {
       throw new Error("Cannot find module 'driftschema-mongo'");
@@ -50,7 +50,7 @@ describe("RecordStoreFactory — registration mechanics", () => {
   });
 
   it("throws an actionable error when the package imports fine but never registers", async () => {
-    const defs = new FieldDefinitionStore();
+    const defs = new InMemoryFieldDefinitionStore();
 
     RecordStoreFactory._importFn = async () => ({}); // simulates a real but broken/incomplete package
 

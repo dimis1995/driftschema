@@ -1,9 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { FieldDefinitionStore } from "../../src/field-definitions/FieldDefinitionStore.js";
+import { InMemoryFieldDefinitionStore } from "../../src/field-definitions/InMemoryFieldDefinitionStore.js";
 
-describe("FieldDefinitionStore", () => {
+describe("InMemoryFieldDefinitionStore", () => {
   it("adds a field definition and retrieves it by entity type", () => {
-    const store = new FieldDefinitionStore();
+    const store = new InMemoryFieldDefinitionStore();
     store.add({ entityType: "diamonds", name: "caratWeight", type: "number", required: true });
     const fields = store.getByEntityType("diamonds");
     expect(fields).toHaveLength(1);
@@ -11,7 +11,7 @@ describe("FieldDefinitionStore", () => {
   });
 
   it("assigns a unique id to each added definition", () => {
-    const store = new FieldDefinitionStore();
+    const store = new InMemoryFieldDefinitionStore();
     const a = store.add({
       entityType: "diamonds",
       name: "caratWeight",
@@ -23,7 +23,7 @@ describe("FieldDefinitionStore", () => {
   });
 
   it("only returns definitions matching the requested entity type", () => {
-    const store = new FieldDefinitionStore();
+    const store = new InMemoryFieldDefinitionStore();
     store.add({ entityType: "diamonds", name: "caratWeight", type: "number", required: true });
     store.add({ entityType: "rings", name: "size", type: "number", required: true });
 
@@ -32,7 +32,7 @@ describe("FieldDefinitionStore", () => {
   });
 
   it("returns an empty array for an entity type with no definitions", () => {
-    const store = new FieldDefinitionStore();
+    const store = new InMemoryFieldDefinitionStore();
     expect(store.getByEntityType("unknown")).toEqual([]);
   });
 });
