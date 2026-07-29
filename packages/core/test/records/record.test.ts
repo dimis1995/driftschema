@@ -6,7 +6,7 @@ import { ValidationError } from "../../src/records/validation.js";
 describe("InMemoryRecordStore", () => {
   it("creates and retrieves a record via the low-level API", async () => {
     const defs = new InMemoryFieldDefinitionStore();
-    const carat = defs.add({
+    const carat = await defs.add({
       entityType: "diamonds",
       name: "caratWeight",
       type: "number",
@@ -22,8 +22,11 @@ describe("InMemoryRecordStore", () => {
 
   it("creates and retrieves a record via the flat API", async () => {
     const defs = new InMemoryFieldDefinitionStore();
-    defs.add({ entityType: "diamonds", name: "caratWeight", type: "number", required: true });
+    await defs.add({ entityType: "diamonds", name: "caratWeight", type: "number", required: true });
     const store = new InMemoryRecordStore(defs);
+
+    console.log(store);
+    console.log(defs);
 
     const created = await store.createFlat("diamonds", { caratWeight: 2.0 });
     const fetched = await store.getFlatById(created.id);
@@ -33,7 +36,7 @@ describe("InMemoryRecordStore", () => {
 
   it("rejects a record missing a required field", async () => {
     const defs = new InMemoryFieldDefinitionStore();
-    defs.add({ entityType: "diamonds", name: "caratWeight", type: "number", required: true });
+    await defs.add({ entityType: "diamonds", name: "caratWeight", type: "number", required: true });
     const store = new InMemoryRecordStore(defs);
 
     await expect(store.create("diamonds", new Map())).rejects.toThrow(ValidationError);
@@ -41,7 +44,7 @@ describe("InMemoryRecordStore", () => {
 
   it("removes a record on delete", async () => {
     const defs = new InMemoryFieldDefinitionStore();
-    const carat = defs.add({
+    const carat = await defs.add({
       entityType: "diamonds",
       name: "caratWeight",
       type: "number",

@@ -6,14 +6,14 @@ import { ValidationError } from "../src/records/validation.js";
 // 1. Define the schema for an entity type — this replaces a fixed DB schema.
 const fieldDefinitions = new InMemoryFieldDefinitionStore();
 
-const caratWeight = fieldDefinitions.add({
+const caratWeight = await fieldDefinitions.add({
   entityType: "diamonds",
   name: "caratWeight",
   type: "number",
   required: true,
 });
 
-const shape = fieldDefinitions.add({
+const shape = await fieldDefinitions.add({
   entityType: "diamonds",
   name: "shape",
   type: "string",

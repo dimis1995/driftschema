@@ -10,7 +10,7 @@ export class InMemoryRecordStore implements RecordStore {
   constructor(private readonly fieldDefinitionStore: FieldDefinitionStore) {}
 
   async create(entityType: string, fields: Map<string, FieldValue>): Promise<StoredRecord> {
-    const definitions = this.fieldDefinitionStore.getByEntityType(entityType);
+    const definitions = await this.fieldDefinitionStore.getByEntityType(entityType);
     validateFields(fields, definitions);
 
     const record: StoredRecord = { id: crypto.randomUUID(), entityType, fields };
@@ -30,7 +30,7 @@ export class InMemoryRecordStore implements RecordStore {
     entityType: string,
     flat: Omit<FlatRecord, "id" | "entityType">,
   ): Promise<FlatRecord> {
-    const definitions = this.fieldDefinitionStore.getByEntityType(entityType);
+    const definitions = await this.fieldDefinitionStore.getByEntityType(entityType);
     const stored = fromFlatRecord({ ...flat, id: crypto.randomUUID(), entityType }, definitions);
     validateFields(stored.fields, definitions);
     this.records.push(stored);
@@ -38,14 +38,14 @@ export class InMemoryRecordStore implements RecordStore {
   }
 
   async getFlatByEntityType(entityType: string): Promise<FlatRecord[]> {
-    const definitions = this.fieldDefinitionStore.getByEntityType(entityType);
+    const definitions = await this.fieldDefinitionStore.getByEntityType(entityType);
     return (await this.getByEntityType(entityType)).map((r) => toFlatRecord(r, definitions));
   }
 
   async getFlatById(id: string): Promise<FlatRecord | undefined> {
     const record = await this.getById(id);
     if (!record) return undefined;
-    const definitions = this.fieldDefinitionStore.getByEntityType(record.entityType);
+    const definitions = await this.fieldDefinitionStore.getByEntityType(record.entityType);
     return toFlatRecord(record, definitions);
   }
 
