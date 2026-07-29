@@ -50,4 +50,20 @@ describe("InMemoryFieldDefinitionStore", () => {
     const store = new InMemoryFieldDefinitionStore();
     expect(await store.getByEntityType("unknown")).toEqual([]);
   });
+
+  it("deletes an existing field based on the given id", async () => {
+    const store = new InMemoryFieldDefinitionStore();
+    expect(
+      await store.add({
+        entityType: "diamonds",
+        name: "caratWeight",
+        type: "number",
+        required: false,
+      }),
+    );
+    const defs = await store.getByEntityType("diamonds");
+    expect(defs.length).toEqual(1);
+    await store.delete(defs[0].id);
+    expect(await store.getByEntityType("diamonds")).toEqual([]);
+  });
 });

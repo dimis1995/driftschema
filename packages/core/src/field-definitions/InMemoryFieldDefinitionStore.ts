@@ -13,6 +13,6 @@ export class InMemoryFieldDefinitionStore implements FieldDefinitionStore {
   }
 
   async delete(id: string) {
-    this.defs = this.defs.filter((d) => d.id === id);
+    this.defs = this.defs.filter((d) => d.id !== id);
   }
 }
