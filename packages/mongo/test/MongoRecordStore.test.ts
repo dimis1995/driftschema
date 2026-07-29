@@ -27,7 +27,7 @@ describe("MongoRecordStore", () => {
 
   it("creates and retrieves a record via the low-level API", async () => {
     const defs = new InMemoryFieldDefinitionStore();
-    const carat = defs.add({
+    const carat = await defs.add({
       entityType: "diamonds",
       name: "caratWeight",
       type: "number",
@@ -43,7 +43,7 @@ describe("MongoRecordStore", () => {
 
   it("creates and retrieves a record via the flat API", async () => {
     const defs = new InMemoryFieldDefinitionStore();
-    defs.add({ entityType: "diamonds", name: "caratWeight", type: "number", required: true });
+    await defs.add({ entityType: "diamonds", name: "caratWeight", type: "number", required: true });
     const store = new MongoRecordStore(defs, collection);
 
     const created = await store.createFlat("diamonds", { caratWeight: 2.0 });
@@ -54,7 +54,7 @@ describe("MongoRecordStore", () => {
 
   it("deletes a record", async () => {
     const defs = new InMemoryFieldDefinitionStore();
-    const carat = defs.add({
+    const carat = await defs.add({
       entityType: "diamonds",
       name: "caratWeight",
       type: "number",

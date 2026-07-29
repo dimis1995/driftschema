@@ -18,7 +18,7 @@ export class MongoRecordStore implements RecordStore {
   ) {}
 
   async create(entityType: string, fields: Map<string, FieldValue>): Promise<StoredRecord> {
-    const definitions = this.fieldDefinitionStore.getByEntityType(entityType);
+    const definitions = await this.fieldDefinitionStore.getByEntityType(entityType);
     validateFields(fields, definitions);
 
     const newDoc = toNewMongoDocument(entityType, fields);
@@ -31,7 +31,7 @@ export class MongoRecordStore implements RecordStore {
     entityType: string,
     flat: Omit<FlatRecord, "id" | "entityType">,
   ): Promise<FlatRecord> {
-    const definitions = this.fieldDefinitionStore.getByEntityType(entityType);
+    const definitions = await this.fieldDefinitionStore.getByEntityType(entityType);
     // id is unknown until Mongo assigns it — use a placeholder, discarded after insert.
     const provisional = fromFlatRecord({ ...flat, id: "pending", entityType }, definitions);
     validateFields(provisional.fields, definitions);
@@ -56,12 +56,12 @@ export class MongoRecordStore implements RecordStore {
   async getFlatById(id: string): Promise<FlatRecord | undefined> {
     const record = await this.getById(id);
     if (!record) return undefined;
-    const definitions = this.fieldDefinitionStore.getByEntityType(record.entityType);
+    const definitions = await this.fieldDefinitionStore.getByEntityType(record.entityType);
     return toFlatRecord(record, definitions);
   }
 
   async getFlatByEntityType(entityType: string): Promise<FlatRecord[]> {
-    const definitions = this.fieldDefinitionStore.getByEntityType(entityType);
+    const definitions = await this.fieldDefinitionStore.getByEntityType(entityType);
     const records = await this.getByEntityType(entityType);
     return records.map((r) => toFlatRecord(r, definitions));
   }

@@ -4,22 +4,31 @@
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "workspaces": [
-    "packages/*"
-  ],
   "exports": {
     ".": {
       "import": "./dist/index.js",
       "types": "./dist/index.d.ts"
     }
   },
+  "engines": {
+    "node": ">=22"
+  },
   "files": [
     "dist"
   ],
   "scripts": {
     "build": "tsc",
-    "test": "vitest run"
+    "test": "vitest run",
+    "example": "tsx examples/basic-usage.ts"
   },
+  "author": "dimis1995",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dimis1995/driftschema.git",
+    "directory": "packages/mongo"
+  },
+  "description": "MongoDB storage engine for driftschema — persists records and field definitions to MongoDB collections.",
   "dependencies": {
     "driftschema": "^0.1.0",
     "mongodb": "^7.5.0"
