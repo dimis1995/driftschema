@@ -2,11 +2,7 @@
 
 A lightweight, dynamic schema library for TypeScript that defines and evolves entity fields at runtime, without migrations.
 
-## Why driftschema?
-
-Traditional ORMs bind you to a schema defined and compiled into your application code. Adding a field means writing and running a migration. driftschema treats field definitions as **data**: registering, deprecating, or evolving a field is a runtime operation against a store, not a code change or a migration script.
-
-This makes it a good fit for domains where the shape of a record legitimately varies per use case, such as user-defined inventory attributes, configurable form fields, pluggable metadata, without maintaining a parallel rigid schema (or a database migration) for every variation.
+This is the core package: `FieldDefinition`/`FieldDefinitionStore`, the `RecordStore` interface, and an in-memory storage engine. See the [monorepo README](../../README.md) for the motivation behind driftschema and an overview of the other packages (e.g. [`driftschema-mongo`](../mongo)).
 
 ## Core concepts
 
