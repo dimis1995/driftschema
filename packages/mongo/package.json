@@ -19,7 +19,8 @@
   "scripts": {
     "build": "tsc",
     "test": "vitest run",
-    "example": "tsx examples/basic-usage.ts"
+    "example": "tsx examples/basic-usage.ts",
+    "prepublishOnly": "npm run build && npm test"
   },
   "author": "dimis1995",
   "license": "MIT",

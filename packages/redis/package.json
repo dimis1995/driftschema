@@ -1,6 +1,7 @@
 {
-  "name": "driftschema",
+  "name": "driftschema-redis",
   "version": "0.1.0",
+  "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "exports": {
@@ -16,17 +17,26 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsc -p tsconfig.build.json",
+    "build": "tsc",
     "test": "vitest run",
     "example": "tsx examples/basic-usage.ts",
     "prepublishOnly": "npm run build && npm test"
   },
-  "type": "module",
   "author": "dimis1995",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/dimis1995/driftschema.git"
+    "url": "https://github.com/dimis1995/driftschema.git",
+    "directory": "packages/redis"
   },
-  "description": "A lightweight, dynamic schema library for JavaScript/TypeScript — define and evolve entity fields at runtime without migrations."
+  "description": "Redis storage engine for driftschema — stores field definitions to Redis.",
+  "dependencies": {
+    "driftschema": "^0.1.0",
+    "redis": "^6.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.1",
+    "@types/redis": "^4.0.10",
+    "redis-memory-server": "^0.17.1"
+  }
 }
