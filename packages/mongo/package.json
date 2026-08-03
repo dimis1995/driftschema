@@ -19,7 +19,7 @@
   "scripts": {
     "build": "tsc",
     "test": "vitest run",
-    "example": "tsx examples/basic-usage.ts",
+    "example": "for f in examples/*.ts; do tsx \"$f\"; done",
     "prepublishOnly": "npm run build && npm test"
   },
   "author": "dimis1995",

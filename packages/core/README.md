@@ -74,13 +74,13 @@ See [`examples/basic-usage.ts`](https://github.com/dimis1995/driftschema/blob/ma
 
 ### `FieldDefinition`
 
-| Field          | Type                                          | Description                                                                                  |
-| -------------- | --------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| `id`           | `string`                                      | Auto-generated unique identifier                                                             |
-| `entityType`   | `string`                                      | Logical grouping (e.g. `"diamonds"`)                                                         |
-| `name`         | `string`                                      | Field name, used in the flat API                                                             |
-| `type`         | `"string" \| "number" \| "boolean" \| "date"` | Field data type                                                                              |
-| `required`     | `boolean`                                     | Whether the field must be present on a record                                                |
+| Field        | Type                                          | Description                                   |
+| ------------ | --------------------------------------------- | --------------------------------------------- |
+| `id`         | `string`                                      | Auto-generated unique identifier              |
+| `entityType` | `string`                                      | Logical grouping (e.g. `"diamonds"`)          |
+| `name`       | `string`                                      | Field name, used in the flat API              |
+| `type`       | `"string" \| "number" \| "boolean" \| "date"` | Field data type                               |
+| `required`   | `boolean`                                     | Whether the field must be present on a record |
 
 ### `FieldDefinitionStore`
 

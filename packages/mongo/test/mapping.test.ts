@@ -6,8 +6,9 @@ import {
   toNewMongoDocument,
   fromMongoDocument,
   toObjectId,
+  toMongoFilter,
 } from "../src/mapping.js";
-import { FieldValue } from "driftschema";
+import { FieldValue, FieldDefinition } from "driftschema";
 
 describe("fields Map <-> object conversion", () => {
   it("round-trips a fields map through object form losslessly", () => {
@@ -56,6 +57,39 @@ describe("toObjectId", () => {
 
   it("throws a clear error for an invalid id", () => {
     expect(() => toObjectId("not-a-real-id")).toThrow(/not a valid MongoDB ObjectId/);
+  });
+});
+
+describe("toMongoFilter", () => {
+  const definitions: FieldDefinition[] = [
+    { id: "carats-id", entityType: "diamonds", name: "carats", type: "number", required: false },
+    { id: "color-id", entityType: "diamonds", name: "color", type: "string", required: false },
+  ];
+
+  it("translates a field name to its internal field id, passing the value through untouched", () => {
+    const filter = toMongoFilter({ carats: { $gte: 5 } }, definitions);
+    expect(filter).toEqual({ "fields.carats-id": { $gte: 5 } });
+  });
+
+  it("translates multiple fields", () => {
+    const filter = toMongoFilter({ carats: { $gte: 5 }, color: "D" }, definitions);
+    expect(filter).toEqual({ "fields.carats-id": { $gte: 5 }, "fields.color-id": "D" });
+  });
+
+  it("translates id to _id as an ObjectId", () => {
+    const objectId = new ObjectId();
+    const filter = toMongoFilter({ id: objectId.toString() }, definitions);
+    expect(filter).toEqual({ _id: objectId });
+  });
+
+  it("throws when id is filtered with an operator", () => {
+    expect(() => toMongoFilter({ id: { $in: ["a", "b"] } }, definitions)).toThrow(
+      /operator is not supported/,
+    );
+  });
+
+  it("throws on a field name with no matching field definition", () => {
+    expect(() => toMongoFilter({ clarity: "VS1" }, definitions)).toThrow(/Unknown field "clarity"/);
   });
 });
 

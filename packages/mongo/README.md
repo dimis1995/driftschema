@@ -51,13 +51,20 @@ You can also construct the stores directly, without going through the factory:
 
 ```ts
 import { MongoClient } from "mongodb";
-import { MongoFieldDefinitionStore, MongoRecordStore, type MongoRecordDocument } from "driftschema-mongo";
+import {
+  MongoFieldDefinitionStore,
+  MongoRecordStore,
+  type MongoRecordDocument,
+} from "driftschema-mongo";
 
 const client = await MongoClient.connect("mongodb://localhost:27017");
 const db = client.db("my-app");
 
 const fieldDefinitions = new MongoFieldDefinitionStore(db.collection("fieldDefinitions"));
-const recordStore = new MongoRecordStore(fieldDefinitions, db.collection<MongoRecordDocument>("records"));
+const recordStore = new MongoRecordStore(
+  fieldDefinitions,
+  db.collection<MongoRecordDocument>("records"),
+);
 ```
 
 See [`examples/basic-usage.ts`](./examples/basic-usage.ts) for a fuller runnable walkthrough (uses `mongodb-memory-server`, so it runs standalone with no real database required — run it with `npm run example`).

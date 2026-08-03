@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import { InMemoryFieldDefinitionStore } from "../../src/field-definitions/InMemoryFieldDefinitionStore.js";
 import { InMemoryRecordStore } from "../../src/records/InMemoryRecordStore.js";
 import { ValidationError } from "../../src/records/validation.js";
+import type { FieldValue } from "../../src/types.js";
 
 describe("InMemoryRecordStore", () => {
   it("creates and retrieves a record via the low-level API", async () => {
@@ -60,7 +61,7 @@ describe("InMemoryRecordStore", () => {
 
     const created = await store.create(
       "diamonds",
-      new Map([
+      new Map<string, FieldValue>([
         [carat.id, 1.5],
         [color.id, "D"],
       ]),
@@ -90,9 +91,9 @@ describe("InMemoryRecordStore", () => {
 
     const created = await store.create("diamonds", new Map([[carat.id, 1.5]]));
 
-    await expect(store.update(created.id, new Map([[carat.id, "not-a-number" as never]]))).rejects.toThrow(
-      ValidationError,
-    );
+    await expect(
+      store.update(created.id, new Map([[carat.id, "not-a-number" as never]])),
+    ).rejects.toThrow(ValidationError);
   });
 
   it("fully replaces a record via replace, dropping fields not included", async () => {
@@ -113,7 +114,7 @@ describe("InMemoryRecordStore", () => {
 
     const created = await store.create(
       "diamonds",
-      new Map([
+      new Map<string, FieldValue>([
         [carat.id, 1.5],
         [color.id, "D"],
       ]),
@@ -135,6 +136,39 @@ describe("InMemoryRecordStore", () => {
 
     expect(updated?.caratWeight).toBe(2.0);
     expect(updated?.color).toBe("F");
+  });
+
+  it("queries records with a filter on a field name", async () => {
+    const defs = new InMemoryFieldDefinitionStore();
+    const carat = await defs.add({
+      entityType: "diamonds",
+      name: "carats",
+      type: "number",
+      required: true,
+    });
+    const store = new InMemoryRecordStore(defs);
+
+    await store.create("diamonds", new Map([[carat.id, 3]]));
+    const big = await store.create("diamonds", new Map([[carat.id, 7]]));
+
+    const results = await store.query("diamonds", { carats: { $gte: 5 } });
+
+    expect(results).toHaveLength(1);
+    expect(results[0]?.id).toBe(big.id);
+  });
+
+  it("queries and flattens records via queryFlat", async () => {
+    const defs = new InMemoryFieldDefinitionStore();
+    await defs.add({ entityType: "diamonds", name: "carats", type: "number", required: true });
+    const store = new InMemoryRecordStore(defs);
+
+    await store.createFlat("diamonds", { carats: 3 });
+    await store.createFlat("diamonds", { carats: 7 });
+
+    const results = await store.queryFlat("diamonds", { carats: { $gte: 5 } });
+
+    expect(results).toHaveLength(1);
+    expect(results[0]?.carats).toBe(7);
   });
 
   it("removes a record on delete", async () => {

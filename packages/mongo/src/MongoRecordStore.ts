@@ -9,7 +9,13 @@ import type {
 } from "driftschema";
 import { validateFields, toFlatRecord, fromFlatRecord } from "driftschema";
 import type { MongoRecordDocument } from "./types.js";
-import { toNewMongoDocument, fromMongoDocument, fieldsToObject, toObjectId } from "./mapping.js";
+import {
+  toNewMongoDocument,
+  fromMongoDocument,
+  fieldsToObject,
+  toObjectId,
+  toMongoFilter,
+} from "./mapping.js";
 
 export class MongoRecordStore implements RecordStore {
   constructor(
@@ -63,6 +69,28 @@ export class MongoRecordStore implements RecordStore {
   async getFlatByEntityType(entityType: string): Promise<FlatRecord[]> {
     const definitions = await this.fieldDefinitionStore.getByEntityType(entityType);
     const records = await this.getByEntityType(entityType);
+    return records.map((r) => toFlatRecord(r, definitions));
+  }
+
+  /**
+   * Queries records of an entity type using a native Mongo-style filter
+   * keyed by field name, e.g. `{ carats: { $gte: 5 } }`. Field names are
+   * translated to internal field ids; unrecognized keys throw rather than
+   * being silently ignored. Not part of the shared RecordStore interface —
+   * the filter shape is Mongo-specific.
+   */
+  async query(entityType: string, filter: Record<string, unknown>): Promise<StoredRecord[]> {
+    const definitions = await this.fieldDefinitionStore.getByEntityType(entityType);
+    const mongoFilter = toMongoFilter(filter, definitions);
+    const docs = await this.collection
+      .find({ ...mongoFilter, entityType } as MongoRecordDocument)
+      .toArray();
+    return docs.map(fromMongoDocument);
+  }
+
+  async queryFlat(entityType: string, filter: Record<string, unknown>): Promise<FlatRecord[]> {
+    const definitions = await this.fieldDefinitionStore.getByEntityType(entityType);
+    const records = await this.query(entityType, filter);
     return records.map((r) => toFlatRecord(r, definitions));
   }
 

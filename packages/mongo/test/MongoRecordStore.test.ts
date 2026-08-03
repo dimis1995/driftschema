@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeAll, afterAll, beforeEach } from "vitest";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import { MongoClient, type Collection } from "mongodb";
-import { InMemoryFieldDefinitionStore } from "driftschema";
+import { InMemoryFieldDefinitionStore, type FieldValue } from "driftschema";
 import { MongoRecordStore } from "../src/MongoRecordStore.js";
 import type { MongoRecordDocument } from "../src/types.js";
 
@@ -52,6 +52,49 @@ describe("MongoRecordStore", () => {
     expect(fetched?.caratWeight).toBe(2.0);
   });
 
+  it("queries records with a native Mongo-style filter on a field name", async () => {
+    const defs = new InMemoryFieldDefinitionStore();
+    const carat = await defs.add({
+      entityType: "diamonds",
+      name: "carats",
+      type: "number",
+      required: true,
+    });
+    const store = new MongoRecordStore(defs, collection);
+
+    await store.create("diamonds", new Map([[carat.id, 3]]));
+    const big = await store.create("diamonds", new Map([[carat.id, 7]]));
+
+    const results = await store.query("diamonds", { carats: { $gte: 5 } });
+
+    expect(results).toHaveLength(1);
+    expect(results[0]?.id).toBe(big.id);
+  });
+
+  it("queries and flattens records via queryFlat", async () => {
+    const defs = new InMemoryFieldDefinitionStore();
+    await defs.add({ entityType: "diamonds", name: "carats", type: "number", required: true });
+    const store = new MongoRecordStore(defs, collection);
+
+    await store.createFlat("diamonds", { carats: 3 });
+    await store.createFlat("diamonds", { carats: 7 });
+
+    const results = await store.queryFlat("diamonds", { carats: { $gte: 5 } });
+
+    expect(results).toHaveLength(1);
+    expect(results[0]?.carats).toBe(7);
+  });
+
+  it("rejects a query that filters on an undefined field", async () => {
+    const defs = new InMemoryFieldDefinitionStore();
+    await defs.add({ entityType: "diamonds", name: "carats", type: "number", required: true });
+    const store = new MongoRecordStore(defs, collection);
+
+    await expect(store.query("diamonds", { clarity: "VS1" })).rejects.toThrow(
+      /Unknown field "clarity"/,
+    );
+  });
+
   it("partially updates a record via update", async () => {
     const defs = new InMemoryFieldDefinitionStore();
     const carat = await defs.add({
@@ -70,7 +113,7 @@ describe("MongoRecordStore", () => {
 
     const created = await store.create(
       "diamonds",
-      new Map([
+      new Map<string, FieldValue>([
         [carat.id, 1.5],
         [color.id, "D"],
       ]),
@@ -109,7 +152,7 @@ describe("MongoRecordStore", () => {
 
     const created = await store.create(
       "diamonds",
-      new Map([
+      new Map<string, FieldValue>([
         [carat.id, 1.5],
         [color.id, "D"],
       ]),

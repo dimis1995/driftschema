@@ -18,7 +18,7 @@
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "test": "vitest run",
-    "example": "tsx examples/basic-usage.ts",
+    "example": "for f in examples/*.ts; do tsx \"$f\"; done",
     "prepublishOnly": "npm run build && npm test"
   },
   "type": "module",

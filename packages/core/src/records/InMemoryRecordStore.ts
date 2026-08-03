@@ -3,6 +3,7 @@ import { fromFlatRecord, toFlatRecord } from "./flatten.js";
 import type { StoredRecord, FieldValue, FlatRecord } from "../types.js";
 import { RecordStore } from "./RecordStore.js";
 import { validateFields } from "./validation.js";
+import { matchesFilter } from "./matchesFilter.js";
 
 export class InMemoryRecordStore implements RecordStore {
   private records: StoredRecord[] = [];
@@ -47,6 +48,18 @@ export class InMemoryRecordStore implements RecordStore {
     if (!record) return undefined;
     const definitions = await this.fieldDefinitionStore.getByEntityType(record.entityType);
     return toFlatRecord(record, definitions);
+  }
+
+  async query(entityType: string, filter: unknown): Promise<StoredRecord[]> {
+    const definitions = await this.fieldDefinitionStore.getByEntityType(entityType);
+    const candidates = await this.getByEntityType(entityType);
+    return candidates.filter((r) => matchesFilter(r, filter, definitions));
+  }
+
+  async queryFlat(entityType: string, filter: unknown): Promise<FlatRecord[]> {
+    const definitions = await this.fieldDefinitionStore.getByEntityType(entityType);
+    const records = await this.query(entityType, filter);
+    return records.map((r) => toFlatRecord(r, definitions));
   }
 
   async update(id: string, fields: Map<string, FieldValue>): Promise<StoredRecord | undefined> {
