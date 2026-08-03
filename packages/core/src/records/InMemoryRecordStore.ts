@@ -49,6 +49,59 @@ export class InMemoryRecordStore implements RecordStore {
     return toFlatRecord(record, definitions);
   }
 
+  async update(id: string, fields: Map<string, FieldValue>): Promise<StoredRecord | undefined> {
+    const index = this.records.findIndex((r) => r.id === id);
+    if (index === -1) return undefined;
+
+    const existing = this.records[index];
+    const definitions = await this.fieldDefinitionStore.getByEntityType(existing.entityType);
+    const merged = new Map([...existing.fields, ...fields]);
+    validateFields(merged, definitions);
+
+    const updated: StoredRecord = { ...existing, fields: merged };
+    this.records[index] = updated;
+    return updated;
+  }
+
+  async updateFlat(
+    id: string,
+    flat: Omit<FlatRecord, "id" | "entityType">,
+  ): Promise<FlatRecord | undefined> {
+    const existing = await this.getById(id);
+    if (!existing) return undefined;
+
+    const definitions = await this.fieldDefinitionStore.getByEntityType(existing.entityType);
+    const partial = fromFlatRecord({ ...flat, id, entityType: existing.entityType }, definitions);
+    const updated = await this.update(id, partial.fields);
+    return updated ? toFlatRecord(updated, definitions) : undefined;
+  }
+
+  async replace(id: string, fields: Map<string, FieldValue>): Promise<StoredRecord | undefined> {
+    const index = this.records.findIndex((r) => r.id === id);
+    if (index === -1) return undefined;
+
+    const existing = this.records[index];
+    const definitions = await this.fieldDefinitionStore.getByEntityType(existing.entityType);
+    validateFields(fields, definitions);
+
+    const updated: StoredRecord = { ...existing, fields };
+    this.records[index] = updated;
+    return updated;
+  }
+
+  async replaceFlat(
+    id: string,
+    flat: Omit<FlatRecord, "id" | "entityType">,
+  ): Promise<FlatRecord | undefined> {
+    const existing = await this.getById(id);
+    if (!existing) return undefined;
+
+    const definitions = await this.fieldDefinitionStore.getByEntityType(existing.entityType);
+    const full = fromFlatRecord({ ...flat, id, entityType: existing.entityType }, definitions);
+    const updated = await this.replace(id, full.fields);
+    return updated ? toFlatRecord(updated, definitions) : undefined;
+  }
+
   async delete(id: string): Promise<void> {
     this.records = this.records.filter((r) => r.id !== id);
   }
