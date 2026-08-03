@@ -2,7 +2,7 @@
 
 A lightweight, dynamic schema library for TypeScript that defines and evolves entity fields at runtime, without migrations.
 
-This is the core package: `FieldDefinition`/`FieldDefinitionStore`, the `RecordStore` interface, and an in-memory storage engine. See the [monorepo README](../../README.md) for the motivation behind driftschema and an overview of the other packages (e.g. [`driftschema-mongo`](../mongo)).
+This is the core package: `FieldDefinition`/`FieldDefinitionStore`, the `RecordStore` interface, and an in-memory storage engine. See the [monorepo README](https://github.com/dimis1995/driftschema/blob/master/README.md) for the motivation behind driftschema and an overview of the other packages (e.g. [`driftschema-mongo`](https://www.npmjs.com/package/driftschema-mongo)).
 
 ## Core concepts
 
@@ -68,7 +68,7 @@ try {
 }
 ```
 
-See [`examples/basic-usage.ts`](./examples/basic-usage.ts) for a fuller runnable walkthrough.
+See [`examples/basic-usage.ts`](https://github.com/dimis1995/driftschema/blob/master/packages/core/examples/basic-usage.ts) for a fuller runnable walkthrough.
 
 ## API
 
@@ -108,4 +108,4 @@ A few deliberate scope decisions, in case they come up:
 
 ## License
 
-MIT — see [LICENSE](./LICENSE).
+MIT — see [LICENSE](https://github.com/dimis1995/driftschema/blob/master/packages/core/LICENSE).
