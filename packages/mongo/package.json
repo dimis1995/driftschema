@@ -1,6 +1,6 @@
 {
   "name": "driftschema-mongo",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -31,7 +31,7 @@
   },
   "description": "MongoDB storage engine for driftschema — persists records and field definitions to MongoDB collections.",
   "dependencies": {
-    "driftschema": "^0.2.0",
+    "driftschema": "^0.3.0",
     "mongodb": "^7.5.0"
   },
   "devDependencies": {
