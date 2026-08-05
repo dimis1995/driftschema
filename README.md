@@ -21,6 +21,7 @@ This is a monorepo containing driftschema and its official storage engines:
 
 - [`driftschema`](./packages/core) — the core library: `FieldDefinition`, `RecordStore`, and an in-memory storage engine. Start here.
 - [`driftschema-mongo`](./packages/mongo) — a MongoDB-backed storage engine for driftschema.
+- [`driftschema-redis`](./packages/redis) - a Redis-backed fields definition store for driftschema.
 
 ## Quick start
 
@@ -44,8 +45,6 @@ const store = await RecordStoreFactory.create("memory", fieldDefinitions);
 
 const diamond = await store.createFlat("diamonds", { caratWeight: 1.5 });
 ```
-
-See the [`driftschema` package README](./packages/core) for the full API and usage docs, and the [`driftschema-mongo` README](./packages/mongo) for MongoDB-backed storage.
 
 ## License
 
