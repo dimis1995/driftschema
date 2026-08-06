@@ -1,5 +1,5 @@
 import type { ObjectId } from "mongodb";
-import type { FieldValue, FieldDefinition } from "driftschema";
+import type { FieldValue, FieldDefinition, NumberFormat } from "driftschema";
 
 export interface MongoRecordDocument {
   _id: ObjectId;
@@ -15,6 +15,8 @@ export interface MongoFieldDefinitionDocument {
   name: string;
   type: FieldDefinition["type"];
   required: boolean;
+  format?: NumberFormat;
+  values?: string[];
 }
 
 export type NewMongoFieldDefinitionDocument = Omit<MongoFieldDefinitionDocument, "_id">;

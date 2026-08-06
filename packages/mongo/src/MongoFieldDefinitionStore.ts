@@ -18,6 +18,8 @@ export class MongoFieldDefinitionStore implements FieldDefinitionStore {
       name: doc.name,
       type: doc.type,
       required: doc.required,
+      ...(doc.format !== undefined && { format: doc.format }),
+      ...(doc.values !== undefined && { values: doc.values }),
     }));
   }
 

@@ -1,6 +1,6 @@
 export type { FieldValue, StoredRecord, FlatRecord } from "./types.js";
 
-export type { FieldDefinition } from "./field-definitions/FieldDefinition.js";
+export type { FieldDefinition, NumberFormat } from "./field-definitions/FieldDefinition.js";
 export { FieldDefinitionStore } from "./field-definitions/FieldDefinitionStore.js";
 export { InMemoryFieldDefinitionStore } from "./field-definitions/InMemoryFieldDefinitionStore.js";
 

@@ -54,6 +54,29 @@ describe("MongoFieldDefinitionStore", () => {
     expect(defs[0].name).toBe("caratWeight");
   });
 
+  it("round-trips enum values and number formats", async () => {
+    const store = new MongoFieldDefinitionStore(collection);
+
+    const color = await store.add({
+      entityType: "diamonds",
+      name: "color",
+      type: "enum",
+      values: ["D", "E", "F"],
+      required: true,
+    });
+    const carat = await store.add({
+      entityType: "diamonds",
+      name: "caratWeight",
+      type: "number",
+      format: "float",
+      required: true,
+    });
+
+    const defs = await store.getByEntityType("diamonds");
+
+    expect(defs).toEqual(expect.arrayContaining([color, carat]));
+  });
+
   it("deletes a field definition", async () => {
     const store = new MongoFieldDefinitionStore(collection);
     const carat = await store.add({

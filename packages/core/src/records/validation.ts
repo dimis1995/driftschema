@@ -1,4 +1,4 @@
-import { FieldDefinition } from "../field-definitions/FieldDefinition.js";
+import { FieldDefinition, NumberFormat } from "../field-definitions/FieldDefinition.js";
 import { FieldValue } from "../types.js";
 
 export class ValidationError extends Error {
@@ -8,9 +8,37 @@ export class ValidationError extends Error {
   }
 }
 
-function isCorrectType(value: FieldValue, type: FieldDefinition["type"]): boolean {
+const INT32_MIN = -2147483648;
+const INT32_MAX = 2147483647;
+
+function matchesFormat(value: number, format: NumberFormat): boolean {
+  switch (format) {
+    case "int":
+    case "int64":
+      return Number.isSafeInteger(value);
+    case "int32":
+      return Number.isInteger(value) && value >= INT32_MIN && value <= INT32_MAX;
+    case "float":
+    case "double":
+      return true;
+  }
+}
+
+function isCorrectType(value: FieldValue, definition: FieldDefinition): boolean {
+  const { type } = definition;
   if (type === "date") return value instanceof Date;
+  if (type === "enum") return typeof value === "string";
+  if (type === "number") {
+    return (
+      typeof value === "number" && (!definition.format || matchesFormat(value, definition.format))
+    );
+  }
   return typeof value === type;
+}
+
+function describeExpectedType(definition: FieldDefinition): string {
+  if (definition.type === "number" && definition.format) return definition.format;
+  return definition.type;
 }
 
 export function validateFields(fields: Map<string, FieldValue>, definitions: FieldDefinition[]) {
@@ -26,9 +54,16 @@ export function validateFields(fields: Map<string, FieldValue>, definitions: Fie
       continue;
     }
 
-    if (!isCorrectType(value, definition.type)) {
+    if (!isCorrectType(value, definition)) {
       issues.push(
-        `${definition.name} invalid type: expected ${definition.type}, got ${typeof value}`,
+        `${definition.name} invalid type: expected ${describeExpectedType(definition)}, got ${typeof value}`,
+      );
+      continue;
+    }
+
+    if (definition.type === "enum" && !(definition.values ?? []).includes(value as string)) {
+      issues.push(
+        `${definition.name} invalid value: expected one of [${(definition.values ?? []).join(", ")}], got "${value}"`,
       );
     }
   }

@@ -74,13 +74,44 @@ See [`examples/basic-usage.ts`](https://github.com/dimis1995/driftschema/blob/ma
 
 ### `FieldDefinition`
 
-| Field        | Type                                          | Description                                   |
-| ------------ | --------------------------------------------- | --------------------------------------------- |
-| `id`         | `string`                                      | Auto-generated unique identifier              |
-| `entityType` | `string`                                      | Logical grouping (e.g. `"diamonds"`)          |
-| `name`       | `string`                                      | Field name, used in the flat API              |
-| `type`       | `"string" \| "number" \| "boolean" \| "date"` | Field data type                               |
-| `required`   | `boolean`                                     | Whether the field must be present on a record |
+| Field        | Type                                                    | Description                                                     |
+| ------------ | ------------------------------------------------------- | --------------------------------------------------------------- |
+| `id`         | `string`                                                | Auto-generated unique identifier                                |
+| `entityType` | `string`                                                | Logical grouping (e.g. `"diamonds"`)                            |
+| `name`       | `string`                                                | Field name, used in the flat API                                |
+| `type`       | `"string" \| "number" \| "boolean" \| "date" \| "enum"` | Field data type                                                 |
+| `required`   | `boolean`                                               | Whether the field must be present on a record                   |
+| `format`     | `NumberFormat` (optional)                               | Refines a `"number"` field — see below. Ignored for other types |
+| `values`     | `string[]` (optional)                                   | Allowed values for an `"enum"` field                            |
+
+`NumberFormat` is `"int" | "int32" | "int64" | "float" | "double"`. JavaScript only has one numeric
+runtime type (a 64-bit float), so `format` doesn't change how a value is stored — it adds a
+validation constraint on top of `"number"`:
+
+- `"int"` / `"int64"` — must be an integer representable exactly as a JS number
+  (`Number.isSafeInteger`, i.e. up to 2^53 - 1). True 64-bit integers can exceed this range;
+  values beyond it are rejected rather than silently losing precision.
+- `"int32"` — must be an integer within the signed 32-bit range (-2147483648 to 2147483647).
+- `"float"` / `"double"` — no extra constraint beyond being a number; both are the same IEEE 754
+  double precision under the hood. These exist purely to document intent.
+
+```ts
+const caratWeight = fieldDefinitions.add({
+  entityType: "diamonds",
+  name: "caratWeight",
+  type: "number",
+  format: "float",
+  required: true,
+});
+
+const color = fieldDefinitions.add({
+  entityType: "diamonds",
+  name: "color",
+  type: "enum",
+  values: ["D", "E", "F", "G", "H"],
+  required: true,
+});
+```
 
 ### `FieldDefinitionStore`
 
