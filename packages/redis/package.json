@@ -1,6 +1,6 @@
 {
   "name": "driftschema-redis",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -31,7 +31,7 @@
   },
   "description": "Redis storage engine for driftschema — stores field definitions to Redis.",
   "dependencies": {
-    "driftschema": "^0.4.0",
+    "driftschema": "^0.5.0",
     "redis": "^6.2.0"
   },
   "devDependencies": {
