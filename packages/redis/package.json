@@ -31,7 +31,7 @@
   },
   "description": "Redis storage engine for driftschema — stores field definitions to Redis.",
   "dependencies": {
-    "driftschema": "^0.1.0",
+    "driftschema": "^0.4.0",
     "redis": "^6.2.0"
   },
   "devDependencies": {

@@ -26,9 +26,6 @@ describe("InMemoryRecordStore", () => {
     await defs.add({ entityType: "diamonds", name: "caratWeight", type: "number", required: true });
     const store = new InMemoryRecordStore(defs);
 
-    console.log(store);
-    console.log(defs);
-
     const created = await store.createFlat("diamonds", { caratWeight: 2.0 });
     const fetched = await store.getFlatById(created.id);
 

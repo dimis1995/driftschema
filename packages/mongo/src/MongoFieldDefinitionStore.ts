@@ -12,7 +12,23 @@ export class MongoFieldDefinitionStore implements FieldDefinitionStore {
   }
   async getByEntityType(entityType: string): Promise<FieldDefinition[]> {
     const docs = await this.collection.find({ entityType }).toArray();
-    return docs.map((doc) => ({
+    return docs.map((doc) => this.fromDoc(doc));
+  }
+
+  async getAll(): Promise<FieldDefinition[]> {
+    const docs = await this.collection.find({}).toArray();
+    return docs.map((doc) => this.fromDoc(doc));
+  }
+
+  async upsert(def: FieldDefinition): Promise<FieldDefinition> {
+    const { id, ...rest } = def;
+    const doc: NewMongoFieldDefinitionDocument = { ...rest };
+    await this.collection.replaceOne({ _id: toObjectId(id) }, doc, { upsert: true });
+    return def;
+  }
+
+  private fromDoc(doc: MongoFieldDefinitionDocument): FieldDefinition {
+    return {
       id: doc._id.toString(),
       entityType: doc.entityType,
       name: doc.name,
@@ -20,7 +36,7 @@ export class MongoFieldDefinitionStore implements FieldDefinitionStore {
       required: doc.required,
       ...(doc.format !== undefined && { format: doc.format }),
       ...(doc.values !== undefined && { values: doc.values }),
-    }));
+    };
   }
 
   async delete(id: string) {

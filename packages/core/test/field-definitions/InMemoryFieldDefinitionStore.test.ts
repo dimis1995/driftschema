@@ -51,6 +51,48 @@ describe("InMemoryFieldDefinitionStore", () => {
     expect(await store.getByEntityType("unknown")).toEqual([]);
   });
 
+  it("returns every definition across entity types via getAll", async () => {
+    const store = new InMemoryFieldDefinitionStore();
+    await store.add({ entityType: "diamonds", name: "caratWeight", type: "number", required: true });
+    await store.add({ entityType: "rings", name: "size", type: "number", required: true });
+
+    const defs = await store.getAll();
+    expect(defs).toHaveLength(2);
+    expect(defs.map((d) => d.name).sort()).toEqual(["caratWeight", "size"]);
+  });
+
+  it("upsert inserts a definition under the given id when it doesn't exist yet", async () => {
+    const store = new InMemoryFieldDefinitionStore();
+    const def = {
+      id: "fixed-id",
+      entityType: "diamonds",
+      name: "caratWeight",
+      type: "number" as const,
+      required: true,
+    };
+
+    const result = await store.upsert(def);
+
+    expect(result).toEqual(def);
+    expect(await store.getByEntityType("diamonds")).toEqual([def]);
+  });
+
+  it("upsert replaces the existing definition with the same id", async () => {
+    const store = new InMemoryFieldDefinitionStore();
+    const original = await store.add({
+      entityType: "diamonds",
+      name: "caratWeight",
+      type: "number",
+      required: true,
+    });
+
+    const updated = { ...original, required: false };
+    await store.upsert(updated);
+
+    const defs = await store.getByEntityType("diamonds");
+    expect(defs).toEqual([updated]);
+  });
+
   it("deletes an existing field based on the given id", async () => {
     const store = new InMemoryFieldDefinitionStore();
     expect(

@@ -12,6 +12,20 @@ export class InMemoryFieldDefinitionStore implements FieldDefinitionStore {
     return this.defs.filter((d) => d.entityType === entityType);
   }
 
+  async getAll(): Promise<FieldDefinition[]> {
+    return [...this.defs];
+  }
+
+  async upsert(def: FieldDefinition): Promise<FieldDefinition> {
+    const index = this.defs.findIndex((d) => d.id === def.id);
+    if (index === -1) {
+      this.defs.push(def);
+    } else {
+      this.defs[index] = def;
+    }
+    return def;
+  }
+
   async delete(id: string) {
     this.defs = this.defs.filter((d) => d.id !== id);
   }
