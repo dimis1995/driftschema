@@ -79,7 +79,12 @@ describe("MongoFieldDefinitionStore", () => {
 
   it("returns every definition across entity types via getAll", async () => {
     const store = new MongoFieldDefinitionStore(collection);
-    await store.add({ entityType: "diamonds", name: "caratWeight", type: "number", required: true });
+    await store.add({
+      entityType: "diamonds",
+      name: "caratWeight",
+      type: "number",
+      required: true,
+    });
     await store.add({ entityType: "rings", name: "size", type: "number", required: true });
 
     const defs = await store.getAll();

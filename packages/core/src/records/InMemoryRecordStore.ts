@@ -62,7 +62,9 @@ export class InMemoryRecordStore implements RecordStore {
 
   async getFlatByEntityType(entityType: string, options?: unknown): Promise<FlatRecord[]> {
     const definitions = await this.fieldDefinitionStore.getByEntityType(entityType);
-    return (await this.getByEntityType(entityType, options)).map((r) => toFlatRecord(r, definitions));
+    return (await this.getByEntityType(entityType, options)).map((r) =>
+      toFlatRecord(r, definitions),
+    );
   }
 
   async getFlatById(id: string): Promise<FlatRecord | undefined> {
