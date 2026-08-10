@@ -6,6 +6,7 @@ export { InMemoryFieldDefinitionStore } from "./field-definitions/InMemoryFieldD
 
 export type { RecordStore } from "./records/RecordStore.js";
 export { InMemoryRecordStore } from "./records/InMemoryRecordStore.js";
+export type { InMemoryPageOptions } from "./records/InMemoryRecordStore.js";
 export { ValidationError, validateFields } from "./records/validation.js";
 export { toFlatRecord, fromFlatRecord } from "./records/flatten.js";
 export { matchesFilter } from "./records/matchesFilter.js";

@@ -122,9 +122,11 @@ const color = fieldDefinitions.add({
 
 - `create(entityType, fields)` — creates a record from a `Map<fieldId, value>`, validated against the entity's field definitions
 - `createFlat(entityType, flat)` — creates a record from a plain object keyed by field name
-- `getById(id)` / `getByEntityType(entityType)` — retrieve `StoredRecord`(s)
-- `getFlatById(id)` / `getFlatByEntityType(entityType)` — retrieve the same data as `FlatRecord`(s)
+- `getById(id)` / `getByEntityType(entityType, options?)` — retrieve `StoredRecord`(s)
+- `getFlatById(id)` / `getFlatByEntityType(entityType, options?)` — retrieve the same data as `FlatRecord`(s)
 - `delete(id)` — removes a record
+
+Like `filter`, the `options` pagination argument is implementation-defined — each `RecordStore` documents and narrows what it accepts (e.g. `{ offset, limit }` for `InMemoryRecordStore`). There's no portable pagination syntax guaranteed across engines. Convention: if the number of records returned equals the requested `limit`, treat that as a signal there may be more — backends don't return a separate "has more" flag.
 
 ### `RecordStoreFactory`
 

@@ -5,6 +5,27 @@ import { RecordStore } from "./RecordStore.js";
 import { validateFields } from "./validation.js";
 import { matchesFilter } from "./matchesFilter.js";
 
+/** Pagination options accepted by `InMemoryRecordStore`'s `getByEntityType` and `query`. */
+export interface InMemoryPageOptions {
+  offset?: number;
+  limit?: number;
+}
+
+function isInMemoryPageOptions(value: unknown): value is InMemoryPageOptions {
+  return typeof value === "object" && value !== null;
+}
+
+function paginate<T>(items: T[], options?: unknown): T[] {
+  if (options === undefined) return items;
+  if (!isInMemoryPageOptions(options)) {
+    throw new Error("Pagination options must be a plain object of the form { offset?, limit? }");
+  }
+
+  const { offset = 0, limit } = options;
+  const sliced = items.slice(offset);
+  return limit === undefined ? sliced : sliced.slice(0, limit);
+}
+
 export class InMemoryRecordStore implements RecordStore {
   private records: StoredRecord[] = [];
 
@@ -19,8 +40,9 @@ export class InMemoryRecordStore implements RecordStore {
     return record;
   }
 
-  async getByEntityType(entityType: string): Promise<StoredRecord[]> {
-    return this.records.filter((r) => r.entityType === entityType);
+  async getByEntityType(entityType: string, options?: unknown): Promise<StoredRecord[]> {
+    const matches = this.records.filter((r) => r.entityType === entityType);
+    return paginate(matches, options);
   }
 
   async getById(id: string): Promise<StoredRecord | undefined> {
@@ -38,9 +60,9 @@ export class InMemoryRecordStore implements RecordStore {
     return toFlatRecord(stored, definitions);
   }
 
-  async getFlatByEntityType(entityType: string): Promise<FlatRecord[]> {
+  async getFlatByEntityType(entityType: string, options?: unknown): Promise<FlatRecord[]> {
     const definitions = await this.fieldDefinitionStore.getByEntityType(entityType);
-    return (await this.getByEntityType(entityType)).map((r) => toFlatRecord(r, definitions));
+    return (await this.getByEntityType(entityType, options)).map((r) => toFlatRecord(r, definitions));
   }
 
   async getFlatById(id: string): Promise<FlatRecord | undefined> {
@@ -50,15 +72,16 @@ export class InMemoryRecordStore implements RecordStore {
     return toFlatRecord(record, definitions);
   }
 
-  async query(entityType: string, filter: unknown): Promise<StoredRecord[]> {
+  async query(entityType: string, filter: unknown, options?: unknown): Promise<StoredRecord[]> {
     const definitions = await this.fieldDefinitionStore.getByEntityType(entityType);
     const candidates = await this.getByEntityType(entityType);
-    return candidates.filter((r) => matchesFilter(r, filter, definitions));
+    const matched = candidates.filter((r) => matchesFilter(r, filter, definitions));
+    return paginate(matched, options);
   }
 
-  async queryFlat(entityType: string, filter: unknown): Promise<FlatRecord[]> {
+  async queryFlat(entityType: string, filter: unknown, options?: unknown): Promise<FlatRecord[]> {
     const definitions = await this.fieldDefinitionStore.getByEntityType(entityType);
-    const records = await this.query(entityType, filter);
+    const records = await this.query(entityType, filter, options);
     return records.map((r) => toFlatRecord(r, definitions));
   }
 

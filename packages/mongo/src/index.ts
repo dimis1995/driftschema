@@ -5,6 +5,7 @@ import type { MongoRecordDocument } from "./types.js";
 
 export { MongoRecordStore } from "./MongoRecordStore.js";
 export { MongoFieldDefinitionStore } from "./MongoFieldDefinitionStore.js";
+export type { MongoPageOptions } from "./mapping.js";
 export type {
   MongoRecordDocument,
   NewMongoRecordDocument,

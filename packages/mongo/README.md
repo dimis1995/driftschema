@@ -83,6 +83,8 @@ Implements driftschema's `FieldDefinitionStore` interface: `add`, `getByEntityTy
 
 Implements driftschema's `RecordStore` interface: `create`, `createFlat`, `getById`, `getByEntityType`, `getFlatById`, `getFlatByEntityType`, `delete`.
 
+`getByEntityType`, `query`, and their flat counterparts accept a `{ skip?, limit? }` pagination option, applied directly to the underlying find cursor.
+
 ### `RecordStoreFactory` config
 
 When creating the `"mongo"` engine via `RecordStoreFactory.create`, the `config` argument must be:

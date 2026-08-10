@@ -1,6 +1,34 @@
-import { ObjectId, type Filter } from "mongodb";
+import { ObjectId, type Filter, type FindCursor } from "mongodb";
 import type { StoredRecord, FieldValue, FieldDefinition } from "driftschema";
 import type { MongoRecordDocument, NewMongoRecordDocument } from "./types.js";
+
+/** Pagination options accepted by `MongoRecordStore`'s `getByEntityType` and `query`. */
+export interface MongoPageOptions {
+  skip?: number;
+  limit?: number;
+}
+
+function isMongoPageOptions(value: unknown): value is MongoPageOptions {
+  return typeof value === "object" && value !== null;
+}
+
+/**
+ * Applies `{ skip, limit }` pagination to a find cursor. Mirrors the
+ * in-memory store's `{ offset, limit }` convention, using Mongo's own
+ * `skip`/`limit` terminology since that's what maps directly onto the
+ * driver's cursor methods.
+ */
+export function applyPageOptions<T>(cursor: FindCursor<T>, options?: unknown): FindCursor<T> {
+  if (options === undefined) return cursor;
+  if (!isMongoPageOptions(options)) {
+    throw new Error("Pagination options must be a plain object of the form { skip?, limit? }");
+  }
+
+  let result = cursor;
+  if (options.skip !== undefined) result = result.skip(options.skip);
+  if (options.limit !== undefined) result = result.limit(options.limit);
+  return result;
+}
 
 /**
  * Converts a Map<fieldId, value> to a plain object, for BSON storage

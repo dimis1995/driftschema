@@ -179,6 +179,53 @@ describe("MongoRecordStore", () => {
     expect(updated?.color).toBe("F");
   });
 
+  it("paginates getByEntityType with skip and limit", async () => {
+    const defs = new InMemoryFieldDefinitionStore();
+    const carat = await defs.add({
+      entityType: "diamonds",
+      name: "caratWeight",
+      type: "number",
+      required: true,
+    });
+    const store = new MongoRecordStore(defs, collection);
+
+    for (let i = 0; i < 5; i++) {
+      await store.create("diamonds", new Map([[carat.id, i]]));
+    }
+
+    const page = await store.getByEntityType("diamonds", { skip: 2, limit: 2 });
+
+    expect(page).toHaveLength(2);
+  });
+
+  it("paginates query results after filtering", async () => {
+    const defs = new InMemoryFieldDefinitionStore();
+    const carat = await defs.add({
+      entityType: "diamonds",
+      name: "carats",
+      type: "number",
+      required: true,
+    });
+    const store = new MongoRecordStore(defs, collection);
+
+    for (let i = 0; i < 5; i++) {
+      await store.create("diamonds", new Map([[carat.id, i]]));
+    }
+
+    const page = await store.query("diamonds", { carats: { $gte: 1 } }, { skip: 1, limit: 2 });
+
+    expect(page).toHaveLength(2);
+  });
+
+  it("rejects pagination options that aren't a plain object", async () => {
+    const defs = new InMemoryFieldDefinitionStore();
+    const store = new MongoRecordStore(defs, collection);
+
+    await expect(store.getByEntityType("diamonds", "page 2")).rejects.toThrow(
+      /Pagination options must be a plain object/,
+    );
+  });
+
   it("deletes a record", async () => {
     const defs = new InMemoryFieldDefinitionStore();
     const carat = await defs.add({

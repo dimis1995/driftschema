@@ -15,6 +15,7 @@ import {
   fieldsToObject,
   toObjectId,
   toMongoFilter,
+  applyPageOptions,
 } from "./mapping.js";
 
 export class MongoRecordStore implements RecordStore {
@@ -54,8 +55,9 @@ export class MongoRecordStore implements RecordStore {
     return doc ? fromMongoDocument(doc) : undefined;
   }
 
-  async getByEntityType(entityType: string): Promise<StoredRecord[]> {
-    const docs = await this.collection.find({ entityType }).toArray();
+  async getByEntityType(entityType: string, options?: unknown): Promise<StoredRecord[]> {
+    const cursor = this.collection.find({ entityType });
+    const docs = await applyPageOptions(cursor, options).toArray();
     return docs.map(fromMongoDocument);
   }
 
@@ -66,9 +68,9 @@ export class MongoRecordStore implements RecordStore {
     return toFlatRecord(record, definitions);
   }
 
-  async getFlatByEntityType(entityType: string): Promise<FlatRecord[]> {
+  async getFlatByEntityType(entityType: string, options?: unknown): Promise<FlatRecord[]> {
     const definitions = await this.fieldDefinitionStore.getByEntityType(entityType);
-    const records = await this.getByEntityType(entityType);
+    const records = await this.getByEntityType(entityType, options);
     return records.map((r) => toFlatRecord(r, definitions));
   }
 
@@ -78,19 +80,29 @@ export class MongoRecordStore implements RecordStore {
    * translated to internal field ids; unrecognized keys throw rather than
    * being silently ignored. Not part of the shared RecordStore interface —
    * the filter shape is Mongo-specific.
+   *
+   * `options` accepts `{ skip?, limit? }`, applied directly to the underlying
+   * find cursor.
    */
-  async query(entityType: string, filter: Record<string, unknown>): Promise<StoredRecord[]> {
+  async query(
+    entityType: string,
+    filter: Record<string, unknown>,
+    options?: unknown,
+  ): Promise<StoredRecord[]> {
     const definitions = await this.fieldDefinitionStore.getByEntityType(entityType);
     const mongoFilter = toMongoFilter(filter, definitions);
-    const docs = await this.collection
-      .find({ ...mongoFilter, entityType } as MongoRecordDocument)
-      .toArray();
+    const cursor = this.collection.find({ ...mongoFilter, entityType } as MongoRecordDocument);
+    const docs = await applyPageOptions(cursor, options).toArray();
     return docs.map(fromMongoDocument);
   }
 
-  async queryFlat(entityType: string, filter: Record<string, unknown>): Promise<FlatRecord[]> {
+  async queryFlat(
+    entityType: string,
+    filter: Record<string, unknown>,
+    options?: unknown,
+  ): Promise<FlatRecord[]> {
     const definitions = await this.fieldDefinitionStore.getByEntityType(entityType);
-    const records = await this.query(entityType, filter);
+    const records = await this.query(entityType, filter, options);
     return records.map((r) => toFlatRecord(r, definitions));
   }
 
