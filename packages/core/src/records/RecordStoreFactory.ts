@@ -9,6 +9,7 @@ export type RecordStoreFactoryFn = (
 
 const ENGINE_PACKAGES: Record<string, string> = {
   mongo: "driftschema-mongo",
+  postgres: "driftschema-postgres",
 };
 
 export class RecordStoreFactory {

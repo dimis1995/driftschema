@@ -21,6 +21,7 @@ This is a monorepo containing driftschema and its official storage engines:
 
 - [`driftschema`](./packages/core) — the core library: `FieldDefinition`, `RecordStore`, and an in-memory storage engine. Start here.
 - [`driftschema-mongo`](./packages/mongo) — a MongoDB-backed storage engine for driftschema.
+- [`driftschema-postgres`](./packages/postgres) — a PostgreSQL-backed storage engine for driftschema.
 - [`driftschema-redis`](./packages/redis) - a Redis-backed fields definition store for driftschema.
 
 ## Quick start

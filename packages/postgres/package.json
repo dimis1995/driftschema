@@ -1,0 +1,42 @@
+{
+  "name": "driftschema-postgres",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "example": "for f in examples/*.ts; do tsx \"$f\"; done",
+    "prepublishOnly": "npm run build && npm test"
+  },
+  "author": "dimis1995",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dimis1995/driftschema.git",
+    "directory": "packages/postgres"
+  },
+  "description": "PostgreSQL storage engine for driftschema — persists records and field definitions as JSONB.",
+  "dependencies": {
+    "driftschema": "^0.6.0",
+    "pg": "^8.23.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.1",
+    "@types/pg": "^8.21.0",
+    "embedded-postgres": "18.4.0-beta.17"
+  }
+}
